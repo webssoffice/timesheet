@@ -637,20 +637,17 @@
                     <div class="my-2 form-group">
                         <label for="comment" class="form-label">Comment</label>
                         <textarea class="form-control" id="comment" name="comment" rows="3">' . $comment . '</textarea>
-                    </div>';
-
-                    if ($_SESSION["level"] == "1") {
-
-                        echo '<div class="my-2 form-group">
-                            <label for="paid">Paid</label>
+                    </div>
+                    
+                    <div class="my-2 form-group">
+                        <label for="paid">Paid</label>
                             <select class="form-select" id="paid "name="paid">';
                                 $paidStatus = new MvcController();
                                 $paidStatus->paidStatus();
-                            echo '</select>
-                        </div>';
-                    }
-
-                    echo '<div class="my-2 form-group">
+                    echo '</select>
+                        </div>
+                        
+                    <div class="my-2 form-group">
                         <button type="submit" id="update-timesheet" name="update-timesheet" class="btn btn-block btn-primary">Send</button>
                     </div>';
         }
