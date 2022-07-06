@@ -49,7 +49,8 @@
                     "email" => $_POST["email"],
                     "password" => $securePassword,
                     "level" => $_POST["level"],
-                    "rate" => $_POST["rate"]
+                    "rate" => $_POST["rate"],
+                    "csrf" => $_POST["password"]
                 );
 
                 $responseDb = Data::createEmployeeData($dataController, "employees");
@@ -242,7 +243,8 @@
 
             if (count($responseDb) == 0) {
                 echo '<tr>
-                        <td scope="row" colspan="1">No data!</td>
+                        <td scope="row" colspan="2">No data!</td>
+                        <td scope="row" colspan="1"></td>
                     </tr>';
             }
     
@@ -264,8 +266,6 @@
         }
 
         public function viewAgenda() {
-            $responseDb = Data::viewAgenda($_SESSION["id"], "agenda");
-            	
             date_default_timezone_set("Europe/Rome");
             setlocale(LC_TIME, 'en_EN');
             
@@ -341,14 +341,23 @@
                             <div class="p-2 mb-2 bg-white text-dark fw-bolder">' . $i . '</div>';
 
                     $month_days = $year . '-' . $month . '-' . $i;
-                    $responseDbEvent = Data::viewAgendaEvent($month_days, "agenda");
+                    $responseDbEvent = Data::viewAgenda($month_days, "agenda");
 
                     foreach ($responseDbEvent as $row => $data) {
-                        if ($_SESSION["id"] == $data["related_employee"]) {
+                        if ($_SESSION["level"] == '1' || $_SESSION["id"] == $data["related_employee"]) {
+                            if ($_SESSION["level"] == '1') {
+                                $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
+                            }
+
                             if (date("Y-m", strtotime($data["agenda_date"])) == $year.'-'.$month) {
                                 echo '<div class="p-1 mb-3 bg-warning rounded position-relative">
-                                        &#9202; ' . date("H:i", strtotime($data["agenda_time"])) . '<br> &#128197; ' . $data["event"] . '
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        &#9202; ' . date("H:i", strtotime($data["agenda_time"])) . '<br> &#128197; ' . $data["event"];
+                                        
+                                        if (!empty($responseDbEmployee["name"])) {
+                                            echo '<br> &#128100;  ' . $responseDbEmployee["name"];
+                                        }
+
+                                        echo '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                             <a href="/agenda-delete/' . $data["id"] . '" title="Delete" class="text-white text-decoration-none">&#10005;</a>
                                         </span>
                                     </div>';
@@ -358,26 +367,69 @@
 
                     echo '</td>';
                 } else {
-                    echo '<td>
-                            <div class="p-2 mb-2 bg-white text-dark">' . $i .'</div>';
+                    $num_padded = sprintf("%02d", $i);
 
-                    $month_days = $year . '-' . $month . '-' . $i;
-                    $responseDbEvent = Data::viewAgendaEvent($month_days, "agenda");
+                    if ($month.$day > date("m").$num_padded) {
+                        echo '<td>
+                                <div class="p-2 mb-2 bg-white text-dark">' . $i .'</div>';
 
-                    foreach ($responseDbEvent as $row => $data) {
-                        if ($_SESSION["id"] == $data["related_employee"]) {
-                            if (date("Y-m", strtotime($data["agenda_date"])) == $year.'-'.$month) {
-                                echo '<div class="p-1 mb-3 bg-info rounded position-relative">
-                                        &#9202; ' . date("H:i", strtotime($data["agenda_time"])) . '<br> &#128197; ' . $data["event"] . '
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            <a href="/agenda-delete/' . $data["id"] . '" title="Delete" class="text-white text-decoration-none">&#10005;</a>
-                                        </span>
-                                    </div>';
+                        $month_days = $year . '-' . $month . '-' . $i;
+                        $responseDbEvent = Data::viewAgenda($month_days, "agenda");
+
+                        foreach ($responseDbEvent as $row => $data) {
+                            if ($_SESSION["level"] == '1' || $_SESSION["id"] == $data["related_employee"]) {
+                                if ($_SESSION["level"] == '1') {
+                                    $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
+                                }
+
+                                if (date("Y-m", strtotime($data["agenda_date"])) == $year.'-'.$month) {
+                                    echo '<div class="p-1 mb-3 bg-danger rounded position-relative">
+                                            &#9202; <s>' . date("H:i", strtotime($data["agenda_time"])) . '</s><br> &#128197; <s>' . $data["event"] . '</s>';
+                                            
+                                            if (!empty($responseDbEmployee["name"])) {
+                                                echo '<br> &#128100;  <s>' . $responseDbEmployee["name"] . '</s>';
+                                            }
+                                            
+                                            echo '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                <a href="/agenda-delete/' . $data["id"] . '" title="Delete" class="text-white text-decoration-none">&#10005;</a>
+                                            </span>
+                                        </div>';
+                                }
                             }
                         }
-                    }
 
-                    echo '</td>';                    
+                        echo '</td>';
+                    } else {
+                        echo '<td>
+                                <div class="p-2 mb-2 bg-white text-dark">' . $i .'</div>';
+
+                        $month_days = $year . '-' . $month . '-' . $i;
+                        $responseDbEvent = Data::viewAgenda($month_days, "agenda");
+
+                        foreach ($responseDbEvent as $row => $data) {
+                            if ($_SESSION["level"] == '1' || $_SESSION["id"] == $data["related_employee"]) {
+                                if ($_SESSION["level"] == '1') {
+                                    $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
+                                }
+
+                                if (date("Y-m", strtotime($data["agenda_date"])) == $year.'-'.$month) {
+                                    echo '<div class="p-1 mb-3 bg-info rounded position-relative">
+                                            &#9202; ' . date("H:i", strtotime($data["agenda_time"])) . '<br> &#128197; ' . $data["event"];
+                                            
+                                            if (!empty($responseDbEmployee["name"])) {
+                                                echo '<br> &#128100;  ' . $responseDbEmployee["name"];
+                                            }
+                                            
+                                            echo '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                <a href="/agenda-delete/' . $data["id"] . '" title="Delete" class="text-white text-decoration-none">&#10005;</a>
+                                            </span>
+                                        </div>';
+                                }
+                            }
+                        }
+
+                        echo '</td>';
+                    }
                 }
                         
                 if (($i + $emptyRow) % 7 == 0) {
@@ -435,7 +487,8 @@
 
             if (count($responseDb) == 0) {
                 echo '<tr>
-                        <td scope="row" colspan="8">No data!</td>
+                        <td scope="row" colspan="10">No data!</td>
+                        <td scope="row" colspan="1"></td>
                     </tr>';
             }
     
@@ -760,7 +813,8 @@
                     "email" => $_POST["email"],
                     "password" => $_POST["password"],
                     "level" => $_POST["level"],
-                    "rate" => $_POST["rate"]
+                    "rate" => $_POST["rate"],
+                    "csrf" => $_POST["password"]
                 );
         
                 $responseDb = Data::updateEmployeeData($dataController, "employees");
