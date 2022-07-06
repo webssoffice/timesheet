@@ -21,8 +21,8 @@
             <li class="nav-item p-2"><a href="/projects" title="Projects" class="nav-link border border-info <?php if ($currentPage == "projects") { echo "active"; } ?>">Projects</a></li>
             <li class="nav-item p-2"><a href="/employees" title="Employees" class="nav-link border border-info <?php if ($currentPage == "employees") { echo "active"; } ?>">Employees</a></li>
             <li class="nav-item p-2"><a href="/registration" title="Registration" class="nav-link border border-info <?php if ($currentPage == "registration") { echo "active"; } ?>">Registration</a></li>
-            <li class="nav-item p-2"><a href="/update-employee/<?php echo $_SESSION["id"]; ?>" title="Employees" class="nav-link border border-info <?php if ($currentPage == "profile" || $currentPage == "update-employee") { echo "active"; } ?>">Profile</a></li>
         <?php } ?>
+        <li class="nav-item p-2"><a href="/update-employee/<?php echo $_SESSION["id"]; ?>" title="Employees" class="nav-link border border-info <?php if ($currentPage == "profile" || $currentPage == "update-employee") { echo "active"; } ?>">Profile</a></li>
         <li class="nav-item p-2"><a href="/worksheet/logout" title="Logout" class="nav-link border border-info <?php if ($currentPage == "logout") { echo "active"; } ?>">Logout</a></li>
     <?php } ?>
 </ul>
