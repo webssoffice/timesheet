@@ -3,7 +3,7 @@ Time Tracking Software
 
 Remember to edit connection.php and rename x.htaccess to .htaccess
 
-DEMO
+DEMO:
 http://timesheet.webss.ro/
 Username: test@test.test
 Password: test
