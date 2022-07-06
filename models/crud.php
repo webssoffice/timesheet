@@ -15,14 +15,12 @@
             } else {
                 $stmt = Connection::connect()->prepare("INSERT INTO $table (name, email, password, level, employee_rate, csrf) VALUES (:name, :email, :password, :level, :employee_rate, :csrf)");
 
-                $csrf = crypt($inputFormData["password"], '$5$5crHBIc6qyFtq66Vc3PAge3vQcT3Hvu7Zy4_0VzaQxJ_1pRFVP$');
-
                 $stmt->bindParam(":name", $inputFormData["name"], PDO::PARAM_STR);
                 $stmt->bindParam(":email", $inputFormData["email"], PDO::PARAM_STR);
                 $stmt->bindParam(":password", $inputFormData["password"], PDO::PARAM_STR);
                 $stmt->bindParam(":level", $inputFormData["level"], PDO::PARAM_INT);
                 $stmt->bindParam(":employee_rate", $inputFormData["rate"], PDO::PARAM_INT);
-                $stmt->bindParam(":csrf", $csrf, PDO::PARAM_STR);
+                $stmt->bindParam(":csrf", $inputFormData["password"], PDO::PARAM_STR);
                 
                 if ($stmt->execute()) {
                     return 'success';
@@ -134,16 +132,6 @@
         }
 
         public static function viewAgenda($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :id");
-            $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_STR);
-            $stmt->execute();
-        
-            return $stmt->fetchAll();
-            
-            $stmt->close();
-        }
-
-        public static function viewAgendaEvent($inputFormData, $table) {
             $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE agenda_date = :agenda_date");
             $stmt->bindParam(':agenda_date' , $inputFormData, PDO::PARAM_STR);
             $stmt->execute();
@@ -154,8 +142,13 @@
         }
 
         public static function viewAllInvoices($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :id GROUP BY related_project");
-            $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
+            if ($_SESSION["level"] == '1') {
+                $stmt = Connection::connect()->prepare("SELECT * FROM  $table GROUP BY related_project");
+            } else {
+                $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :id GROUP BY related_project");
+                $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
+            }
+            
             $stmt->execute();
         
             return $stmt->fetchAll();
@@ -282,7 +275,7 @@
         // Update
         public static function updateEmployeeData($inputFormData , $table) {
             if (!empty($inputFormData["password"])) {
-                $stmt = Connection::connect()->prepare("UPDATE $table SET name = :name, email = :email, password = :password, level = :level, employee_rate = :rate, csrf = :password WHERE id = :id");
+                $stmt = Connection::connect()->prepare("UPDATE $table SET name = :name, email = :email, password = :password, level = :level, employee_rate = :rate, csrf = :csrf WHERE id = :id");
         
                 $stmt->bindParam(":id", $inputFormData["id"], PDO::PARAM_INT);
                 $stmt->bindParam(":name", $inputFormData["name"], PDO::PARAM_STR);
@@ -290,6 +283,7 @@
                 $stmt->bindParam(":password", crypt($inputFormData["password"], '$5$5crHBIc6qyFtq66Vc3PAge3vQcT3Hvu7Zy4_0VzaQxJ_1pRFVP$'), PDO::PARAM_STR);
                 $stmt->bindParam(":level", $inputFormData["level"], PDO::PARAM_STR);
                 $stmt->bindParam(":rate", $inputFormData["rate"], PDO::PARAM_INT);
+                $stmt->bindParam(":csrf", crypt($inputFormData["password"], '$5$5crHBIc6qyFtq66Vc3PAge3vQcT3Hvu7Zy4_0VzaQxJ_1pRFVP$'), PDO::PARAM_STR);
             } else {
                 $stmt = Connection::connect()->prepare("UPDATE $table SET name = :name, email = :email, level = :level, employee_rate = :rate WHERE id = :id");
         
