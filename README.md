@@ -3,9 +3,11 @@ Time Tracking Software
 
 Remember to edit connection.php and rename x.htaccess to .htaccess
 
-DEMO:
+DEMO for employe profile:
 http://timesheet.webss.ro/
 Username: test@test.test
 Password: test
+
+For admin profile demo, please contact me.
 
 Feel free to contact me if you have any questions: razvan.cotoarba@webss.ro
