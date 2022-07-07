@@ -178,7 +178,7 @@
     
                 $responseDb = Data::recoverPassword($dataController, "employees");
     
-                if ($responseDb["email"] == $_POST["email"]) {
+                if ($responseDb["email"] == $_POST["email"] && filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
                     $randomPassword = substr(md5(uniqid(mt_rand(), true)), 0, 8);
 
                     $dataController = array(
@@ -520,7 +520,7 @@
                     $totalResultPartial[] = $result_partial;
                     $totalTimePartial[] = $time_partial;
                     $employee = explode(" ", $responseDbEmployee["name"]);
-                    $classId = str_shuffle(preg_replace('/[0-9]+/', '', $responseDb["project"]));
+                    $classId = str_shuffle(preg_replace('/[^0-9\s!?.,\'\"]+/', '', strtolower($responseDb["project"])));
 
                     echo '<tr>
                             <th scope="row" class="align-middle">' . $responseDb["project"] . '</th>
@@ -639,7 +639,6 @@
                         <th colspan="5"> GRAND TOTAL: ' . $timeOutput . ' &euro; ' . number_format(array_sum($totalResult), 2, ',', '.') . '</th>
                     </tr>';  
             }
-             
         }
 
         public function viewInvoice() {
