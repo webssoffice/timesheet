@@ -44,12 +44,12 @@ CREATE TABLE `agenda` (
 
 CREATE TABLE `employees` (
   `id` int(11) NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `level` int(11) NOT NULL,
-  `employee_rate` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `csrf` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `employee_rate` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `csrf` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `registration_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -68,7 +68,8 @@ INSERT INTO `employees` (`id`, `name`, `email`, `password`, `level`, `employee_r
 
 CREATE TABLE `projects` (
   `id` int(11) NOT NULL,
-  `project` mediumtext CHARACTER SET utf8mb4 DEFAULT NULL
+  `project` mediumtext CHARACTER SET utf8 DEFAULT NULL,
+  `details` longtext DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
