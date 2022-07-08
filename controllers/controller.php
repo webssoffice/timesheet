@@ -28,14 +28,14 @@
                     echo '<meta name="description" content="' . $_GET["page"] . '">' . "\r\n";
                     echo '<meta name="keywords" content="' . $_GET["page"] . '">' . "\r\n";
                 } else {
-                    echo '<title>' . ucfirst($_GET["page"]) . ' - WebssWork</title>' . "\r\n";
+                    echo '<title>' . ucfirst($_GET["page"]) . ' - TimeSheet Management</title>' . "\r\n";
                     echo '<meta name="description" content="' . $_GET["page"] . '">' . "\r\n";
                     echo '<meta name="keywords" content="' . $_GET["page"] . '">' . "\r\n";
                 }
             } else {
-                echo '<title>WebssWork</title>' . "\r\n";
-                echo '<meta name="description" content="WebssWork">' . "\r\n";
-                echo '<meta name="keywords" content="WebssWork">' . "\r\n";
+                echo '<title>TimeSheet Management</title>' . "\r\n";
+                echo '<meta name="description" content="TimeSheet Management">' . "\r\n";
+                echo '<meta name="keywords" content="TimeSheet Management">' . "\r\n";
             }
         }
 
@@ -131,7 +131,8 @@
         public function addProject() {
             if (isset($_POST["addProject"])) {
                 $dataController = array(
-                        "project" => $_POST["project"]
+                        "project" => $_POST["project"],
+                        "details" => $_POST["details"]
                     );
 
                     $responseDb = Data::addProject($dataController, "projects");
@@ -250,10 +251,19 @@
     
             foreach ($responseDb as $row => $data) {
                 echo '<tr>
-                        <td class="align-middle col-9">' . $data["project"] . '</td>
+                        <td class="align-middle col-9">' . $data["project"] . '</td>';
+
+                if ($_SESSION["level"] == '1') {
+                    echo '<td class="align-middle"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-warning">&#128065;</button></a></td>
                         <td class="align-middle"><a href="/update-project/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/projects/delete-project/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>
-                    </tr>';
+                        <td class="align-middle"><a href="/projects/delete-project/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>';
+                } else {
+                    echo '<td scope="row" colspan="1"></td>
+                        <td scope="row" colspan="1"></td>
+                        <td class="align-middle d-flex justify-content-end"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-success">&#128065;</button></a></td>';
+                }
+
+                echo '</tr>';
             }
         }
 
@@ -383,7 +393,7 @@
                                 }
 
                                 if (date("Y-m", strtotime($data["agenda_date"])) == $year.'-'.$month) {
-                                    echo '<div class="p-1 mb-3 bg-danger rounded position-relative">
+                                    echo '<div class="p-1 mb-3 bg-secondary rounded position-relative">
                                             &#9202; <s>' . date("H:i", strtotime($data["agenda_time"])) . '</s><br> &#128197; <s>' . $data["event"] . '</s>';
                                             
                                             if (!empty($responseDbEmployee["name"])) {
@@ -479,7 +489,7 @@
         }
 
         public function viewAllWork() {
-            if ($_SESSION["level"] == "1") {
+            if ($_SESSION["level"] == '1') {
                 $responseDb = Data::viewAllWork("", "works");
             } else {
                 $responseDb = Data::viewAllWork($_SESSION["id"], "works");
@@ -745,9 +755,24 @@
             }
         }
 
+        public function viewProjectDetails() {
+            $dataController = $_GET["id"];
+            $responseDb = Data::updateProject($dataController, "projects");
+
+            echo '<div class="my-2 form-group">
+                        <label>Project name</label>
+                        <input type="text" class="form-control" value="' . $responseDb["project"] . '" readonly>
+                    </div>
+                    
+                    <div class="my-2 form-group">
+                        <label>Project details</label>
+                        <textarea rows="15" class="form-control" readonly>' . $responseDb["details"] . '</textarea>
+                    </div>';
+        }
+
         // Update
         public function updateEmployee() {
-            if ($_SESSION["level"] == "1") {
+            if ($_SESSION["level"] == '1') {
                 $dataController = $_GET["id"];
             } else {
                 if ($_GET["id"] == $_SESSION["id"]) {
@@ -782,7 +807,7 @@
                         <input type="password" id="password" name="password" value="" class="form-control">
                     </div>';
 
-                    if ($_SESSION["level"] == "1") {
+                    if ($_SESSION["level"] == '1') {
                         echo '<div class="my-2 form-group">
                             <label for="level">Level</label>
                             <select id="level" name="level" class="form-select" required>
@@ -795,9 +820,15 @@
                     }
 
                     echo '<div class="my-2 form-group">
-                            <label for="rate">Rate/Hour (&euro;)</label>
-                            <input type="number" id="rate" name="rate" class="form-control" value="' . $employeeRate . '">
-                        </div>
+                            <label for="rate">Rate/Hour (&euro;)</label>';
+
+                            if ($_SESSION["level"] == '1') {
+                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $employeeRate . '">';
+                            } else {
+                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $employeeRate . '" readonly>';
+                            }
+                        
+                        echo '</div>
 
                         <div class="my-2 form-group">
                             <button type="submit" id="update-employee" name="update-employee" class="btn btn-block btn-primary">Send</button>
@@ -844,7 +875,8 @@
             echo '<div class="my-2 form-group">
                         <label for="project">Project</label>
                         <select class="form-select" id="project "name="project">
-                            <option value="' . $project . '" selected>' . $responseDbProject["project"] . '</option>';
+                            <option value="' . $project . '" selected>' . $responseDbProject["project"] . '</option>
+                            <option value="" disabled>Select</option>';
                                 $viewProjects = new MvcController();
                                 $viewProjects->viewProjects();
                         echo '</select>
@@ -854,7 +886,8 @@
                     <div class="my-2 form-group">
                         <label for="employee">Employee</label>
                         <select class="form-select" id="employee "name="employee">
-                            <option value="' . $employee . '" selected>' . $responseDbEmployee["name"] . '</option>';
+                            <option value="' . $employee . '" selected>' . $responseDbEmployee["name"] . '</option>
+                            <option value="" disabled>Select</option>';
                                 $viewEmployee = new MvcController();
                                 $viewEmployee->viewEmployee();
                         echo '</select>
@@ -915,13 +948,15 @@
             $dataController = $_GET["id"];
             $responseDb = Data::updateProject($dataController, "projects");
     
-            $id = $responseDb["id"];
-            $project = $responseDb["project"];
-    
             echo '<div class="my-2 form-group">
                         <label for="project">Project name</label>
-                        <input type="text" id="project" name="project" class="form-control" value="' . $project . '" required>
-                        <input type="hidden" value="' . $id . '"id="id" name="id">
+                        <input type="text" id="project" name="project" class="form-control" value="' . $responseDb["project"] . '" required>
+                        <input type="hidden" value="' . $responseDb["id"] . '"id="id" name="id">
+                    </div>
+
+                    <div class="my-2 form-group">
+                        <label for="details">Project details</label>
+                        <textarea id="details" name="details" class="form-control" rows="15">' . $responseDb["details"] . '</textarea>
                     </div>
 
                     <div class="my-2 form-group">
@@ -933,7 +968,8 @@
             if (isset($_POST["update-project"])) {        
                 $dataController = array(
                     "id" => $_POST["id"],
-                    "project" => $_POST["project"]
+                    "project" => $_POST["project"],
+                    "details" => $_POST["details"]
                 );
         
                 $responseDb = Data::updateProjectData($dataController, "projects");
