@@ -497,8 +497,7 @@
 
             if (count($responseDb) == 0) {
                 echo '<tr>
-                        <td scope="row" colspan="10">No data!</td>
-                        <td scope="row" colspan="1"></td>
+                        <td scope="row" colspan="11">No data!</td>
                     </tr>';
             }
     
