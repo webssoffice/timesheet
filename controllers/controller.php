@@ -612,35 +612,34 @@
                 }
             }
 
-            $sum = strtotime('00:00:00');
-             
-            $time = 0;
-             
-            foreach ($totalTime as $element) {
-                $timeInSec = strtotime($element) - $sum;
-                $time = $time + $timeInSec;
-            }
-             
-            $h = intval($time / 3600);
-            $time = $time - ($h * 3600);
-            $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
-            $timeOutput = ("$h:$m");
-
-            $sum_partial = strtotime('00:00:00');
-             
-            $time_partial = 0;
-             
-            foreach ($totalTimePartial as $element_partial) {
-                $timeInSecPartial = strtotime($element_partial) - $sum_partial;
-                $time_partial = $time_partial + $timeInSecPartial;
-            }
-             
-            $h_partial = intval($time_partial / 3600);
-            $time_partial = $time_partial - ($h_partial * 3600);
-            $m_partial = str_pad(intval($time_partial / 60), 2, '0', STR_PAD_LEFT);
-            $timeOutputPartial = ("$h_partial:$m_partial");
-
             if (!empty($totalResult)) {
+                $sum = strtotime('00:00:00');
+                $time = 0;
+                
+                foreach ($totalTime as $element) {
+                    $timeInSec = strtotime($element) - $sum;
+                    $time = $time + $timeInSec;
+                }
+                
+                $h = intval($time / 3600);
+                $time = $time - ($h * 3600);
+                $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
+                $timeOutput = ("$h:$m");
+
+                $sum_partial = strtotime('00:00:00');
+                
+                $time_partial = 0;
+                
+                foreach ($totalTimePartial as $element_partial) {
+                    $timeInSecPartial = strtotime($element_partial) - $sum_partial;
+                    $time_partial = $time_partial + $timeInSecPartial;
+                }
+                
+                $h_partial = intval($time_partial / 3600);
+                $time_partial = $time_partial - ($h_partial * 3600);
+                $m_partial = str_pad(intval($time_partial / 60), 2, '0', STR_PAD_LEFT);
+                $timeOutputPartial = ("$h_partial:$m_partial");
+
                 echo '<tr class="table-dark">
                         <th colspan="3" class="d-none d-lg-table-cell">&nbsp;</th>
                         <th class="text-end" scope="row">TOTAL:</th>
