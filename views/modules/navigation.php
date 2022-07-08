@@ -17,8 +17,8 @@
         <li class="nav-item p-2"><a href="/worksheet" title="WorkSheet" class="nav-link border border-info <?php if ($currentPage == "worksheet") { echo "active"; } ?>">WorkSheet</a></li>
         <li class="nav-item p-2"><a href="/agenda" title="Agenda" class="nav-link border border-info <?php if ($currentPage == "agenda") { echo "active"; } ?>">Agenda</a></li>
         <li class="nav-item p-2"><a href="/invoices" title="Invoices" class="nav-link border border-info <?php if ($currentPage == "invoices" || $currentPage == "show-invoice") { echo "active"; } ?>">Invoices</a></li>
-        <?php if ($_SESSION["level"] == "1") { ?>
-            <li class="nav-item p-2"><a href="/projects" title="Projects" class="nav-link border border-info <?php if ($currentPage == "projects") { echo "active"; } ?>">Projects</a></li>
+        <li class="nav-item p-2"><a href="/projects" title="Projects" class="nav-link border border-info <?php if ($currentPage == "projects") { echo "active"; } ?>">Projects</a></li>
+        <?php if ($_SESSION["level"] == '1') { ?>
             <li class="nav-item p-2"><a href="/employees" title="Employees" class="nav-link border border-info <?php if ($currentPage == "employees") { echo "active"; } ?>">Employees</a></li>
             <li class="nav-item p-2"><a href="/registration" title="Registration" class="nav-link border border-info <?php if ($currentPage == "registration") { echo "active"; } ?>">Registration</a></li>
         <?php } ?>

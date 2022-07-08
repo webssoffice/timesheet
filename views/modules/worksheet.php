@@ -83,14 +83,12 @@
                             </select>
                             <input type="hidden" id="related_employee" name="related_employee" value="<?php echo $_SESSION["id"]; ?>">
                         </div>
-                    </th>
-                    <th scope="col">
+
                         <div class="my-2 form-group">
                             <label for="comment">Comment</label>
-                            <input type="text" id="comment" name="comment" class="form-control" placeholder="Comment" required>
+                            <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Comment" required></textarea>
                         </div>
-                    </th>
-                    <th scope="col">
+
                         <div class="my-2 form-group">
                             <button type="submit" id="startTime" name="startTime" class="btn btn-block btn-primary">Start</button>
                         </div>

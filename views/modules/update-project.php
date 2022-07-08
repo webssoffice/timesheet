@@ -1,5 +1,5 @@
 <?php
-    if (!$_SESSION["validation"] || $_SESSION["level"] != 1 || $_SESSION["password"] != $_SESSION["csrf"]) {
+    if (!$_SESSION["validation"] || $_SESSION["level"] != '1' || $_SESSION["password"] != $_SESSION["csrf"]) {
     
         header('location: /login');
     
@@ -14,7 +14,7 @@
 <form method="POST">
     <?php
         $updateProjectData = new MvcController();
-        $updateProjectData ->updateProjectData();
         $updateProjectData->updateProject();
+        $updateProjectData ->updateProjectData();
     ?>
 </form>

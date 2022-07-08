@@ -5,8 +5,8 @@
         $recoverPassword = new MvcController();
         $recoverPassword->recoverPassword();
 
-        if (isset($_GET['action'])) {
-            if ($_GET['action'] == 'error') {
+        if (isset($_GET["action"])) {
+            if ($_GET["action"] == 'error') {
                 echo '<div class="alert alert-danger" role="alert">Data entered is incorrect!</div>';
             } elseif ($_GET["action"] == 'success') {
                 echo '<div class="alert alert-success" role="alert">Action performed successfully!</div>';

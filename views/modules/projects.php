@@ -1,5 +1,5 @@
 <?php
-    if (!$_SESSION["validation"] || $_SESSION["level"] != 1 || $_SESSION["password"] != $_SESSION["csrf"]) {
+    if (!$_SESSION["validation"] || $_SESSION["password"] != $_SESSION["csrf"]) {
     
         header('location: /login');
     
@@ -54,6 +54,8 @@
             header("refresh:3; url=$final_link_success");
         }
     }
+
+    if ($_SESSION["level"] == '1') {
 ?>
 
 <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiv" aria-expanded="false" aria-controls="collapseDiv">&#10010;</button>
@@ -69,11 +71,15 @@
                 <tr>
                     <th scope="col">
                         <div class="my-2 form-group">
-                            <label for="project">Add project</label>
+                            <label for="project">Project name</label>
                             <input type="text" id="project" name="project" class="form-control" placeholder="Project name" required>
                         </div>
-                    </th>
-                    <th scope="col">
+
+                        <div class="my-2 form-group">
+                            <label for="details">Project details</label>
+                            <textarea class="form-control" id="details" name="details" rows="3" placeholder="Project details"></textarea>
+                        </div>
+                        
                         <div class="my-2 form-group">
                             <button type="submit" id="addProject" name="addProject" class="btn btn-block btn-primary">Send</button>
                         </div>
@@ -84,10 +90,15 @@
     </form>
 </div>
 
+<?php
+    }
+?>
+
 <table class="table table-striped">
     <thead>
         <tr>
             <th scope="col" class="col-9">Projects</th>
+            <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
         </tr>

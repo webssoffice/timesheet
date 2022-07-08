@@ -1,5 +1,5 @@
 <?php
-    if (!$_SESSION["validation"] || $_SESSION["level"] != 1 || $_SESSION["password"] != $_SESSION["csrf"]) {
+    if (!$_SESSION["validation"] || $_SESSION["level"] != '1' || $_SESSION["password"] != $_SESSION["csrf"]) {
     
         header('location: /login');
     

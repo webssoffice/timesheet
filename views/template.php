@@ -42,7 +42,7 @@
         <script src="/assets/js/main.js"></script>
 
         <footer>
-            <div class="text-center p-3 d-print-none">&copy; <?php echo date("Y"); ?>. Made in <a class="text-dark" href="https://www.webss.ro">webss</a> lab.</div>
+            <div class="text-center p-3 d-print-none">&copy; <?php echo date("Y"); ?>. Made with &#9829; in <a class="text-dark" href="https://www.webss.ro">webss</a> lab.</div>
         </footer>
 
         <?php
