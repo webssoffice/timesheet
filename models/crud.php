@@ -70,9 +70,10 @@
         }
 
         public static function addProject($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("INSERT INTO $table (project) VALUES (:project)");
+            $stmt = Connection::connect()->prepare("INSERT INTO $table (project, details) VALUES (:project, :details)");
 
             $stmt->bindParam(":project", $inputFormData["project"], PDO::PARAM_STR);
+            $stmt->bindParam(":details", $inputFormData["details"], PDO::PARAM_STR);
            
             if ($stmt->execute()) {
                 return 'success';
@@ -366,10 +367,11 @@
         }
 
         public static function updateProjectData($inputFormData , $table) {
-            $stmt = Connection::connect()->prepare("UPDATE $table SET project = :project WHERE id = :id");
+            $stmt = Connection::connect()->prepare("UPDATE $table SET project = :project, details = :details WHERE id = :id");
         
             $stmt->bindParam(":id", $inputFormData["id"], PDO::PARAM_INT);
             $stmt->bindParam(":project", $inputFormData["project"], PDO::PARAM_STR);
+            $stmt->bindParam(":details", $inputFormData["details"], PDO::PARAM_STR);
         
             if ($stmt->execute()) {
                 return 'success';

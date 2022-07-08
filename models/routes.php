@@ -8,6 +8,7 @@
                 $link == 'registration' ||
                 $link == 'employees' ||
                 $link == 'projects' ||
+                $link == 'project-details' ||
                 $link == 'update-employee' ||
                 $link == 'update-timesheet' ||
                 $link == 'update-project' ||
