@@ -250,17 +250,29 @@
             }
     
             foreach ($responseDb as $row => $data) {
+                $responseDbDetails = Data::updateProject($data["id"], "projects");
+
                 echo '<tr>
                         <td class="align-middle col-9">' . $data["project"] . '</td>';
 
                 if ($_SESSION["level"] == '1') {
-                    echo '<td class="align-middle"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-warning">&#128065;</button></a></td>
-                        <td class="align-middle"><a href="/update-project/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
+                    if (!empty($responseDbDetails["details"])) {
+                        echo '<td class="align-middle"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-warning">&#128065;</button></a></td>';
+                    } else {
+                        echo '<td scope="row" colspan="1"></td>';
+                    }
+
+                    echo '<td class="align-middle"><a href="/update-project/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
                         <td class="align-middle"><a href="/projects/delete-project/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>';
                 } else {
                     echo '<td scope="row" colspan="1"></td>
-                        <td scope="row" colspan="1"></td>
-                        <td class="align-middle d-flex justify-content-end"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-success">&#128065;</button></a></td>';
+                        <td scope="row" colspan="1"></td>';
+                    
+                    if (!empty($responseDbDetails["details"])) {
+                        echo '<td class="align-middle d-flex justify-content-end"><a href="/project-details/' . $data["id"] . '" title="View"><button class="btn btn-success">&#128065;</button></a></td>';
+                    } else {
+                        echo '<td scope="row" colspan="1"></td>';
+                    }
                 }
 
                 echo '</tr>';
