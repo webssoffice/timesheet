@@ -479,10 +479,18 @@
             foreach ($responseDb as $row => $data) {
                 $responseDbProject = Data::getProjectNameInvoices($data["related_project"], "projects");
 
+                $responseDbLink = Data::viewWorkInvoice($data["related_project"], $_SESSION["id"], "works");
+
                 echo '<tr>
-                        <td class="align-middle col-9">' . $responseDbProject["project"] . '</td>
-                        <td class="align-middle d-flex justify-content-end"><a href="/show-invoice/' . $data["related_project"] . '" title="Show invoice"><button class="btn btn-success">&#128065;</button></a></td>
-                    </tr>';
+                        <td class="align-middle col-9">' . $responseDbProject["project"] . '</td>';
+
+                        if (count($responseDbLink) != 0) {
+                            echo '<td class="align-middle d-flex justify-content-end"><a href="/show-invoice/' . $data["related_project"] . '" title="Show invoice"><button class="btn btn-success">&#128065;</button></a></td>';
+                        } else {
+                            echo '<td>&nbsp;</td>';
+                        }
+
+                    echo '</tr>';
             }
         }
 
@@ -732,22 +740,23 @@
                         </tr>
                     </tbody>';
             }
-             
-            $sum = strtotime('00:00:00');
-             
-            $time = 0;
-             
-            foreach ($totalTime as $element) {
-                $timeInSec = strtotime($element) - $sum;
-                $time = $time + $timeInSec;
-            }
-             
-            $h = intval($time / 3600);
-            $time = $time - ($h * 3600);
-            $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
-            $timeOutput = ("$h:$m");
+
+            if (!empty($totalRate)) {             
+                $sum = strtotime('00:00:00');
+                
+                $time = 0;
+                
+                foreach ($totalTime as $element) {
+                    $timeInSec = strtotime($element) - $sum;
+                    $time = $time + $timeInSec;
+                }
+                
+                $h = intval($time / 3600);
+                $time = $time - ($h * 3600);
+                $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
+                $timeOutput = ("$h:$m");
             
-            if (!empty($totalRate)) {
+            
                 echo '<tr class="table-primary">
                         <th colspan="1">&nbsp;</th>
                         <th class="text-end" scope="row">TOTAL:</th>
