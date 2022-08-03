@@ -549,7 +549,7 @@
                     $totalResultPartial[] = $result_partial;
                     $totalTimePartial[] = $time_partial;
                     $employee = explode(" ", $responseDbEmployee["name"]);
-                    $classId = str_shuffle(preg_replace('/[^0-9\s!?.,\'\"]+/', '', strtolower($responseDb["project"])));
+                    $classId = str_shuffle(preg_replace('/[^a-zA-Z\s!?.,\'\"]+/', '', strtolower($responseDb["project"])));
 
                     echo '<tr>
                             <th scope="row" class="align-middle">' . $responseDb["project"] . '</th>
