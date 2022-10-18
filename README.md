@@ -5,8 +5,8 @@ Remember to edit connection.php and rename x.htaccess to .htaccess
 
 DEMO for employee profile:
 http://timesheet.webss.ro/
-Username: test@test.test
-Password: test
+Username: (temporarily disabled)
+Password: (temporarily disabled)
 
 For admin profile demo, please contact me.
 
