@@ -234,7 +234,7 @@
                         <td class="align-middle d-none d-lg-table-cell">' . date("d-m-Y H:i", strtotime($data["registration_date"])) . '</td>
                         <td class="align-middle">' . $level . '</td>
                         <td class="align-middle"><a href="/update-employee/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/employees/delete-employee/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>
+                        <td class="align-middle"><a href="/employees/delete-employee/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>
                     </tr>';
             }
         }
@@ -263,7 +263,7 @@
                     }
 
                     echo '<td class="align-middle"><a href="/update-project/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/projects/delete-project/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>';
+                        <td class="align-middle"><a href="/projects/delete-project/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>';
                 } else {
                     echo '<td scope="row" colspan="1"></td>
                         <td scope="row" colspan="1"></td>';
@@ -573,7 +573,7 @@
                         }
                         
                         echo '<td class="align-middle"><a href="/update-timesheet/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/worksheet/delete-timesheet/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>
+                        <td class="align-middle"><a href="/worksheet/delete-timesheet/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>
                     </tr>';
                     
                     if (empty($data["end_time"])) {
@@ -587,15 +587,19 @@
                                     var diffMins = Math.floor(((diffMs % 86400000) % 3600000) / 60000);
                                     var diffSecs = Math.floor((((diffMs % 86400000) % 3600000) % 60000) / 1000 );
 
+                                    var hrs = diffHrs;
+                                    if (hrs < 10)
+                                    hrs = "0" + hrs;
+
                                     var mins = diffMins;
                                     if (mins < 10)
-                                    mins = \'0\' + mins;
+                                    mins = "0" + mins;
 
                                     var secs = diffSecs;
                                     if (secs < 10)
-                                    secs = \'0\' + secs;
+                                    secs = "0" + secs;
 
-                                    var diff = diffHrs + ":" + mins + ":" + secs;
+                                    var diff = hrs + ":" + mins + ":" + secs;
                                 
                                     document.getElementById(\'' . $classId . '\').textContent = diff;
                                 }
@@ -626,7 +630,7 @@
                         }
                         
                         echo '<td class="align-middle"><a href="/update-timesheet/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/worksheet/delete-timesheet/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#10006;</button></a></td>
+                        <td class="align-middle"><a href="/worksheet/delete-timesheet/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>
                     </tr>';
                 }
             }
