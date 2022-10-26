@@ -653,15 +653,20 @@
                 
                 $time_partial = 0;
                 
-                foreach ($totalTimePartial as $element_partial) {
-                    $timeInSecPartial = strtotime($element_partial) - $sum_partial;
-                    $time_partial = $time_partial + $timeInSecPartial;
+                if (is_array($totalTimePartial)) {
+                    foreach ($totalTimePartial as $element_partial) {
+                        $timeInSecPartial = strtotime($element_partial) - $sum_partial;
+                        $time_partial = $time_partial + $timeInSecPartial;
+                    }
+                    
+                    $h_partial = intval($time_partial / 3600);
+                    $time_partial = $time_partial - ($h_partial * 3600);
+                    $m_partial = str_pad(intval($time_partial / 60), 2, '0', STR_PAD_LEFT);
+                    $timeOutputPartial = ("$h_partial:$m_partial");
+                } else {
+                    $timeOutputPartial = '0:00';
+                    $totalResultPartial[] = null;
                 }
-                
-                $h_partial = intval($time_partial / 3600);
-                $time_partial = $time_partial - ($h_partial * 3600);
-                $m_partial = str_pad(intval($time_partial / 60), 2, '0', STR_PAD_LEFT);
-                $timeOutputPartial = ("$h_partial:$m_partial");
 
                 echo '<tr class="table-dark">
                         <th colspan="3" class="d-none d-lg-table-cell">&nbsp;</th>
