@@ -215,14 +215,14 @@
         public function viewAllEmployee() {
             $responseDb = Data::viewAllEmployee("employees");
 
-            if (count($responseDb) == 0) {
+            if (count($responseDb) == '0') {
                 echo '<tr>
                         <td scope="row" colspan="6">No data!</td>
                     </tr>';
             }
     
             foreach ($responseDb as $row => $data) {
-                if ($data["level"] == 1) {
+                if ($data["level"] == '1') {
                     $level = 'Admin';
                 } else {
                     $level = 'Employee';
@@ -242,7 +242,7 @@
         public function viewAllProjects() {
             $responseDb = Data::viewAllProjects("projects");
 
-            if (count($responseDb) == 0) {
+            if (count($responseDb) == '0') {
                 echo '<tr>
                         <td scope="row" colspan="2">No data!</td>
                         <td scope="row" colspan="1"></td>
@@ -355,7 +355,7 @@
                 echo '<td class="bg-light"></td>';
             }
 
-            for ($i = 1; $i <= $dayMonth; $i++) {
+            for ($i = '1'; $i <= $dayMonth; $i++) {
                 $num_padded = sprintf("%02d", $i);
 
                 if ($month.$day == date("m").$num_padded) {
@@ -454,12 +454,12 @@
                     }
                 }
                         
-                if (($i + $emptyRow) % 7 == 0) {
+                if (($i + $emptyRow) % 7 == '0') {
                     echo '</tr><tr>';
                 }
             }
             
-            for ($i = 0; ($i + $emptyRow + $dayMonth) % 7 != 0; $i++) {
+            for ($i = 0; ($i + $emptyRow + $dayMonth) % 7 != '0'; $i++) {
                 echo '<td class="bg-light"></td>';
             }
 
@@ -469,7 +469,7 @@
         public function viewAllInvoices() {
             $responseDb = Data::viewAllInvoices($_SESSION["id"], "works");
 
-            if (count($responseDb) == 0) {
+            if (count($responseDb) == '0') {
                 echo '<tr>
                         <td scope="row" colspan="1">No data!</td>
                         <td scope="row" colspan="1"></td>
@@ -484,10 +484,14 @@
                 echo '<tr>
                         <td class="align-middle col-9">' . $responseDbProject["project"] . '</td>';
 
-                        if (count($responseDbLink) != 0) {
+                        if ($_SESSION["level"] == '1') {
                             echo '<td class="align-middle d-flex justify-content-end"><a href="/show-invoice/' . $data["related_project"] . '" title="Show invoice"><button class="btn btn-success">&#128065;</button></a></td>';
                         } else {
-                            echo '<td>&nbsp;</td>';
+                            if (count($responseDbLink) != '0') {
+                                echo '<td class="align-middle d-flex justify-content-end"><a href="/show-invoice/' . $data["related_project"] . '" title="Show invoice"><button class="btn btn-success">&#128065;</button></a></td>';
+                            } else {
+                                echo '<td>&nbsp;</td>';
+                            }
                         }
 
                     echo '</tr>';
@@ -498,7 +502,7 @@
             $responseDb = Data::paidStatus($_GET["id"], "works");
     
             foreach ($responseDb as $row => $data) {
-                if ($data["paid"] == 1) {
+                if ($data["paid"] == '1') {
                     echo '<option value="1">Yes</option>
                         <option value="0">No</option>';
                 } else {
@@ -515,7 +519,7 @@
                 $responseDb = Data::viewAllWork($_SESSION["id"], "works");
             }
 
-            if (count($responseDb) == 0) {
+            if (count($responseDb) == '0') {
                 echo '<tr>
                         <td scope="row" colspan="11">No data!</td>
                     </tr>';
@@ -536,7 +540,7 @@
                 $totalResult[] = $result;
                 $totalTime[] = $time;
 
-                if ($data["paid"] == 0) {
+                if ($data["paid"] == '0') {
                     $start_time_partial = new DateTime($data["start_time"], new DateTimeZone("Europe/Rome"));
                     $end_time_partial = new DateTime($data["end_time"], new DateTimeZone("Europe/Rome"));
                     $interval_partial = $end_time_partial->diff($start_time_partial);    
@@ -559,7 +563,7 @@
                             <td class="align-middle">' . $time . '</td>
                             <td class="align-middle d-none d-lg-table-cell"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
                             <td class="align-middle">' . nl2br($data["comment"]) . '</td>
-                            <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == 1) { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
+                            <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == '1') { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
 
                         if (empty($data["end_time"])) {
                             echo '<td class="align-middle">
@@ -616,7 +620,7 @@
                         <td class="align-middle">' . $time . '</td>
                         <td class="align-middle d-none d-lg-table-cell"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
                         <td class="align-middle">' . nl2br($data["comment"]) . '</td>
-                        <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == 1) { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
+                        <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == '1') { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
 
                         if (empty($data["end_time"])) {
                             echo '<td class="align-middle">
@@ -722,7 +726,8 @@
                         <th scope="col" class="col-md-2">Stop</th>
                         <th scope="col">Total</th>
                         <th scope="col" class="col-md-1">Rate</th>
-                        <th scope="col" class="col-md-6">Comment</th>
+                        <th scope="col" class="col-md-5">Comment</th>
+                        <th scope="col" class="col-md-1">Paid</th>
                     </tr>
                 </thead>';
     
@@ -738,6 +743,12 @@
                 $result = $hoursAsDecimal*$price;
                 $totalRate[] = $result;
                 $totalTime[] = $time;
+
+                if ($data["paid"] == '1') {
+                    $paid = 'Yes';
+                } else {
+                    $paid = 'No';
+                }
                 
                 echo '<tbody>
                         <tr>
@@ -746,6 +757,7 @@
                             <td class="w-15 align-middle">' . $time . '</td>
                             <td class="w-15 align-middle"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
                             <td class="w-25 align-middle">' . nl2br($data["comment"]) . '</td>
+                            <td class="w-15 align-middle">' . $paid . '</td>
                         </tr>
                     </tbody>';
             }
@@ -812,22 +824,15 @@
 
             $responseDb = Data::updateEmployee($dataController, "employees");
     
-            $id = $responseDb["id"];
-            $name = $responseDb["name"];
-            $email = $responseDb["email"];
-            $password = $responseDb["password"];
-            $level = $responseDb["level"];
-            $employeeRate = $responseDb["employee_rate"];
-    
             echo '<div class="my-2 form-group">
                         <label for="name">Name and Surname</label>
-                        <input type="text" id="name" name="name" class="form-control" value="' . $name . '" required>
-                        <input type="hidden" value="' . $id . '" name="id">
+                        <input type="text" id="name" name="name" class="form-control" value="' . $responseDb["name"] . '" required>
+                        <input type="hidden" value="' . $responseDb["id"] . '" name="id">
                     </div>
 
                     <div class="my-2 form-group">
                         <label for="email">E-mail</label>
-                        <input type="email" id="email" name="email" class="form-control"  value="' . $email . '" aria-describedby="emailHelp" required>
+                        <input type="email" id="email" name="email" class="form-control"  value="' . $responseDb["email"] . '" aria-describedby="emailHelp" required>
                     </div>
 
                     <div class="my-2 form-group">
@@ -839,7 +844,7 @@
                         echo '<div class="my-2 form-group">
                             <label for="level">Level</label>
                             <select id="level" name="level" class="form-select" required>
-                                <option value="' . $level . '" selected>'; if ($level == 1) { echo 'Admin'; } elseif ($level == 2) { echo 'Employee'; }  echo '</option>
+                                <option value="' . $responseDb["level"] . '" selected>'; if ($responseDb["level"] == '1') { echo 'Admin'; } elseif ($responseDb["level"] == 2) { echo 'Employee'; }  echo '</option>
                                 <option value="" disabled>Select</option>
                                 <option value="1">Admin</option>
                                 <option value="2">Employee</option>
@@ -851,9 +856,9 @@
                             <label for="rate">Rate/Hour (&euro;)</label>';
 
                             if ($_SESSION["level"] == '1') {
-                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $employeeRate . '">';
+                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $responseDb["employee_rate"] . '">';
                             } else {
-                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $employeeRate . '" readonly>';
+                                echo '<input type="number" id="rate" name="rate" class="form-control" value="' . $responseDb["employee_rate"] . '" readonly>';
                             }
                         
                         echo '</div>
@@ -889,32 +894,24 @@
         public function updateTimeSheet() {
             $dataController = $_GET["id"];
             $responseDb = Data::updateTimeSheet($dataController, "works");
-    
-            $id = $responseDb["id"];
-            $project = $responseDb["related_project"];
-            $employee = $responseDb["related_employee"];
-            $start_time = $responseDb["start_time"];
-            $end_time = $responseDb["end_time"];
-            $comment = $responseDb["comment"];
-
-            $responseDbProject = Data::getProjectName($project, "projects");
-            $responseDbEmployee = Data::getEmployeeName($employee, "employees");
+            $responseDbProject = Data::getProjectName($responseDb["related_project"], "projects");
+            $responseDbEmployee = Data::getEmployeeName($responseDb["related_employee"], "employees");
     
             echo '<div class="my-2 form-group">
                         <label for="project">Project</label>
                         <select class="form-select" id="project "name="project">
-                            <option value="' . $project . '" selected>' . $responseDbProject["project"] . '</option>
+                            <option value="' . $responseDb["related_project"] . '" selected>' . $responseDbProject["project"] . '</option>
                             <option value="" disabled>Select</option>';
                                 $viewProjects = new MvcController();
                                 $viewProjects->viewProjects();
                         echo '</select>
-                        <input type="hidden" value="' . $id . '" id="id" name="id">
+                        <input type="hidden" value="' . $responseDb["id"] . '" id="id" name="id">
                     </div>
 
                     <div class="my-2 form-group">
                         <label for="employee">Employee</label>
                         <select class="form-select" id="employee "name="employee">
-                            <option value="' . $employee . '" selected>' . $responseDbEmployee["name"] . '</option>
+                            <option value="' . $responseDb["related_employee"] . '" selected>' . $responseDbEmployee["name"] . '</option>
                             <option value="" disabled>Select</option>';
                                 $viewEmployee = new MvcController();
                                 $viewEmployee->viewEmployee();
@@ -923,17 +920,17 @@
 
                     <div class="my-2 form-group">
                         <label for="start_time">Start</label>
-                        <input type="text" id="start_time" name="start_time" value="' . $start_time . '" class="form-control">
+                        <input type="text" id="start_time" name="start_time" value="' . $responseDb["start_time"] . '" class="form-control">
                     </div>
 
                     <div class="my-2 form-group">
                         <label for="end_time">Stop</label>
-                        <input type="text" id="end_time" name="end_time" value="' . $end_time . '" class="form-control">
+                        <input type="text" id="end_time" name="end_time" value="' . $responseDb["end_time"] . '" class="form-control">
                     </div>
 
                     <div class="my-2 form-group">
                         <label for="comment" class="form-label">Comment</label>
-                        <textarea class="form-control" id="comment" name="comment" rows="3">' . $comment . '</textarea>
+                        <textarea class="form-control" id="comment" name="comment" rows="3">' . $responseDb["comment"] . '</textarea>
                     </div>
                     
                     <div class="my-2 form-group">
