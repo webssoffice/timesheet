@@ -232,9 +232,19 @@
                         <td class="align-middle d-none d-lg-table-cell">' . $data["name"] . '</td>
                         <td class="align-middle">' . $data["email"] . '</td>
                         <td class="align-middle d-none d-lg-table-cell">' . date("d-m-Y H:i", strtotime($data["registration_date"])) . '</td>
-                        <td class="align-middle">' . $level . '</td>
-                        <td class="align-middle"><a href="/update-employee/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>
-                        <td class="align-middle"><a href="/employees/delete-employee/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>
+                        <td class="align-middle">' . $level . '</td>';
+
+                        if ($data["level"] == '1') {
+                            if ($_SESSION["id"] == $data["related_employee"]) {
+                                echo '<td class="align-middle"><a href="/update-employee/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>';
+                            } else {
+                                echo '<td>&nbsp;</td>';
+                            }
+                        } else {
+                            echo '<td class="align-middle"><a href="/update-employee/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>';
+                        }
+                        
+                        echo '<td class="align-middle"><a href="/employees/delete-employee/' . $data["id"] . '" title="Delete"><button class="btn btn-danger">&#9587;</button></a></td>
                     </tr>';
             }
         }
@@ -478,7 +488,6 @@
     
             foreach ($responseDb as $row => $data) {
                 $responseDbProject = Data::getProjectNameInvoices($data["related_project"], "projects");
-
                 $responseDbLink = Data::viewWorkInvoice($data["related_project"], $_SESSION["id"], "works");
 
                 echo '<tr>
@@ -652,9 +661,7 @@
                 $time = $time - ($h * 3600);
                 $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
                 $timeOutput = ("$h:$m");
-
                 $sum_partial = strtotime('00:00:00');
-                
                 $time_partial = 0;
                 
                 if (is_array($totalTimePartial)) {
@@ -685,7 +692,11 @@
         public function viewInvoice() {
             $responseDb = Data::viewWorkInvoice($_GET["id"], $_SESSION["id"], "works");
             $responseDbProject = Data::viewRelatedProject($_GET["id"], "projects");
-            $responseDbEmployee = Data::updateEmployee($_SESSION["id"], "employees");
+
+            foreach ($responseDb as $row => $data) {
+                $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
+            }
+
             $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
             $now_time = $date->format("H:i:s d-m-Y");
 
@@ -764,7 +775,6 @@
 
             if (!empty($totalRate)) {             
                 $sum = strtotime('00:00:00');
-                
                 $time = 0;
                 
                 foreach ($totalTime as $element) {
@@ -1012,10 +1022,11 @@
         public function deleteEmployeeData() {
             if (isset($_GET["delete-employee"])) {
                 $dataController = $_GET["delete-employee"];
-
                 $responseDB = Data::deleteEmployeeData($dataController, "employees");
+                $responseDBWorks = Data::deleteWorkUserData($dataController, "works");
+                $responseDBAgenda = Data::deleteAgendaUserData($dataController, "agenda");
 
-                if ($responseDB == "success") {
+                if ($responseDB == "success" && $responseDBWorks == "success" && $responseDBAgenda == "success") {
                     header("location: /employees/delete");
                 } else {
                     header("location: /employees/error");
@@ -1026,7 +1037,6 @@
         public function deleteProjectData() {
             if (isset($_GET["delete-project"])) {
                 $dataController = $_GET["delete-project"];
-
                 $responseDB = Data::deleteProjectData($dataController, "projects");
 
                 if ($responseDB == "success") {
@@ -1040,7 +1050,6 @@
         public function deleteWorkData() {
             if (isset($_GET["delete-timesheet"])) {
                 $dataController = $_GET["delete-timesheet"];
-
                 $responseDB = Data::deleteWorkData($dataController, "works");
 
                 if ($responseDB == "success") {
@@ -1054,7 +1063,6 @@
         public function deleteAgendaData() {
             if (isset($_GET["delete-agenda"])) {
                 $dataController = $_GET["delete-agenda"];
-
                 $responseDB = Data::deleteAgendaData($dataController, "agenda");
 
                 if ($responseDB == "success") {
