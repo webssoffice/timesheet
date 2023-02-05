@@ -28,12 +28,12 @@
                 }
             }
 
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function startTime($inputFormData, $table) {
             $stmt = Connection::connect()->prepare("INSERT INTO $table (related_employee, related_project, start_time, comment) VALUES (:related_employee, :related_project, :start_time, :comment)");
-            $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
+            $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
             $now_time = $date->format("Y-m-d H:i:s");
             $stmt->bindParam(":related_employee", $inputFormData["related_employee"], PDO::PARAM_STR);
             $stmt->bindParam(":related_project", $inputFormData["project"], PDO::PARAM_STR);
@@ -46,7 +46,7 @@
                 return 'error';
             }
 
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function addAgenda($inputFormData, $table) {
@@ -62,7 +62,7 @@
                 return 'error';
             }
 
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function addProject($inputFormData, $table) {
@@ -76,7 +76,7 @@
                 return 'error';
             }
 
-            $stmt->close();
+            $stmt = null;
         }
 
         // Read
@@ -87,7 +87,7 @@
 
             return $stmt->fetch();
 
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function recoverPassword($inputFormData, $table) {
@@ -97,7 +97,7 @@
 
             return $stmt->fetch();
 
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewAllEmployee($table) {
@@ -106,7 +106,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewAllProjects($table) {
@@ -115,7 +115,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewProjects($table) {
@@ -124,7 +124,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewAgenda($inputFormData, $table) {
@@ -134,7 +134,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewAllInvoices($inputFormData, $table) {
@@ -149,7 +149,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function paidStatus($inputFormData, $table) {
@@ -159,7 +159,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewAllWork($inputFormData, $table) {
@@ -174,7 +174,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewWorkInvoice($related_project, $related_employee, $table) {
@@ -191,7 +191,7 @@
 
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function updateEmployee($inputFormData, $table) {
@@ -201,7 +201,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewRelatedProject($inputFormData, $table) {
@@ -211,7 +211,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function updateTimeSheet($inputFormData, $table) {
@@ -221,7 +221,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
         
         public static function getProjectName($inputFormData, $table) {
@@ -231,7 +231,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function getProjectNameInvoices($inputFormData, $table) {
@@ -241,7 +241,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function viewEmployee($table) {
@@ -250,7 +250,7 @@
         
             return $stmt->fetchAll();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function getEmployeeName($inputFormData, $table) {
@@ -260,7 +260,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function updateProject($inputFormData, $table) {
@@ -270,7 +270,7 @@
         
             return $stmt->fetch();
             
-            $stmt->close();
+            $stmt = null;
         }
 
         // Update
@@ -299,7 +299,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function changePassword($inputFormData , $table) {
@@ -314,7 +314,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function endTime($inputFormData , $table) {
@@ -328,7 +328,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function updateTimeSheetData($inputFormData , $table) {
@@ -359,7 +359,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function updateProjectData($inputFormData , $table) {
@@ -374,7 +374,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         // Delete
@@ -388,7 +388,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function deleteProjectData($inputFormData, $table) {
@@ -401,7 +401,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function deleteWorkData($inputFormData, $table) {
@@ -414,7 +414,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function deleteWorkUserData($inputFormData, $table) {
@@ -427,7 +427,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function deleteAgendaData($inputFormData, $table) {
@@ -440,7 +440,7 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
 
         public static function deleteAgendaUserData($inputFormData, $table) {
@@ -453,6 +453,6 @@
                 return 'error';
             }
         
-            $stmt->close();
+            $stmt = null;
         }
     }
