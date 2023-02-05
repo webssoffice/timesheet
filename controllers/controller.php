@@ -21,7 +21,7 @@
         public function seoPages() {
             if (isset($_GET["page"])) {
                 if ($_GET["page"] == "show-invoice") {
-                    $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
+                    $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
                     $now_time = $date->format("YmdHis");
 
                     echo '<title>Invoice &#8470; #' . $now_time . '</title>' . "\r\n";
@@ -87,7 +87,7 @@
             }
 
             if (isset($_POST["endTime"])) {
-                $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
+                $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
                 $now_time = $date->format("Y-m-d H:i:s");
 
                 $dataController = array(
@@ -326,7 +326,7 @@
             $month = date('m', strtotime($data));
             $year = date('Y', strtotime($data));
             $firstDay = mktime(0,0,0,$month, 1, $year);
-            $currentMonth = strftime('%B', $firstDay);
+            $currentMonth = date('F', $firstDay);
             $dayMonth = cal_days_in_month(0, $month, $year);
             $nextSunday = strtotime('next Sunday');
             $daysWeek = array();
@@ -334,7 +334,7 @@
             $afterDay = date("Y-m-d", strtotime($data ." +1 month"));
             
             for ($i = 0; $i < 7; $i++) {
-                $daysWeek[] = strftime('%A', $nextSunday);
+                $daysWeek[] = date('l', $nextSunday);
                 $nextSunday = strtotime('+1 day', $nextSunday);
             }
             
@@ -623,7 +623,7 @@
                 } else {
                     echo '<tr class="target">
                         <th scope="row" class="align-middle">' . $responseDb["project"] . '</th>
-                        <td class="align-middle d-none d-lg-table-cell">' . $employee[0] . '</td>
+                        <td class="align-middle d-none d-lg-table-cell">' . $responseDbEmployee["name"] . '</td>
                         <td class="align-middle d-none d-lg-table-cell">' . date("d-m-Y H:i", strtotime($data["start_time"])) . '</td>
                         <td class="align-middle d-none d-lg-table-cell">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } echo '</td>
                         <td class="align-middle">' . $time . '</td>
@@ -697,7 +697,7 @@
                 $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
             }
 
-            $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
+            $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
             $now_time = $date->format("H:i:s d-m-Y");
 
             echo '<hr>
