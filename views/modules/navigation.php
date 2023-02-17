@@ -8,6 +8,15 @@
     $currentPage = basename($baseName);
 ?>
 
+<nav class="navbar navbar-light justify-content-end">
+    <span class="navbar-text">
+        <?php 
+            $viewEmployeeInfo = new MvcController();
+            $viewEmployeeInfo->viewEmployeeInfo();
+        ?>
+    </span>
+</nav>
+
 <ul class="nav nav-pills nav-fill d-print-none">
     <?php if ($_SESSION == false) { ?>
         <li class="nav-item p-2"><a href="/login" title="Login" class="nav-link border border-info <?php if ($currentPage == "login") { echo "active"; } ?>">Login</a></li>

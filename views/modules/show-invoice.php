@@ -1,5 +1,5 @@
 <?php
-    if (!$_SESSION["validation"] || $_SESSION["password"] != $_SESSION["csrf"]) {
+    if (empty($_SESSION["validation"]) || $_SESSION["password"] != $_SESSION["csrf"]) {
     
         header('location: /login');
     
@@ -35,12 +35,12 @@
     <button class="btn btn-success d-print-none" onclick="window.print()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span>Print invoice</button>
 </div>
 
-<div class="float-none">
+<div class="p-3">
     <?php
-        $date = new DateTime(null, new DateTimeZone("Europe/Rome"));
+        $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
         $now_time = $date->format("YmdHis");
     ?>
-    <h1 class="p-2">Invoice &#8470; #<?php echo $now_time; ?></h1>
+    <h4>Invoice &#8470; #<?php echo $now_time; ?></h4>
 </div>
 
 <table class="table table-striped table-hover">

@@ -1,5 +1,5 @@
 <?php
-    if (!$_SESSION["validation"] || $_SESSION["password"] != $_SESSION["csrf"]) {
+    if (empty($_SESSION["validation"]) || $_SESSION["password"] != $_SESSION["csrf"]) {
     
         header('location: /login');
     
