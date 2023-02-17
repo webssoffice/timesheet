@@ -68,10 +68,13 @@
         public function timeManagement() {
             if (isset($_POST["startTime"])) {
                 if (!empty($_POST["project"]) && isset($_POST["related_employee"])) {
+                    $responseDbEmployee = Data::updateEmployee($_POST["related_employee"], "employees");
+
                     $dataController = array(
                         "project" => $_POST["project"],
                         "comment" => $_POST["comment"],
-                        "related_employee" => $_POST["related_employee"]
+                        "related_employee" => $_POST["related_employee"],
+                        "employee_rate" => $responseDbEmployee["employee_rate"]
                     );
 
                     $responseDb = Data::startTime($dataController, "works");
@@ -160,8 +163,10 @@
                 if ($responseDb["email"] == $_POST["email"] && $responseDb["password"] == $securePassword) {
                     $_SESSION["validation"] = true;
                     $_SESSION["id"] = $responseDb["id"];
-                    $_SESSION["level"] = $responseDb["level"];
+                    $_SESSION["name"] = $responseDb["name"];
+                    $_SESSION["email"] = $responseDb["email"];
                     $_SESSION["password"] = $responseDb["password"];
+                    $_SESSION["level"] = $responseDb["level"];
                     $_SESSION["csrf"] = $responseDb["csrf"];
     
                     header("location: /worksheet");
@@ -208,6 +213,18 @@
                     }
                 } else {
                     header("location: /recover/error");
+                }
+            }
+        }
+
+        public function viewEmployeeInfo() {
+            if (!empty($_SESSION["name"]) && !empty($_SESSION["level"])) {
+                echo $_SESSION["name"];
+
+                if ($_SESSION["level"] == '1') {
+                    echo '&nbsp;(Admin)';
+                } elseif ($_SESSION["level"] == '2') {
+                    echo '&nbsp;(Employee)';
                 }
             }
         }
@@ -537,8 +554,8 @@
             foreach ($responseDb as $row => $data) {
                 $responseDb = Data::viewRelatedProject($data["related_project"], "projects");
                 $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
-                $start_time = new DateTime($data["start_time"], new DateTimeZone("Europe/Rome"));
-                $end_time = new DateTime($data["end_time"], new DateTimeZone("Europe/Rome"));
+                $start_time = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
+                $end_time = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
                 $interval = $end_time->diff($start_time);    
                 $time = ($interval->format("%a") * 24) + $interval->format("%H"). ":". $interval->format("%I");
                 list($h, $m) = explode(':',$time);
@@ -550,8 +567,8 @@
                 $totalTime[] = $time;
 
                 if ($data["paid"] == '0') {
-                    $start_time_partial = new DateTime($data["start_time"], new DateTimeZone("Europe/Rome"));
-                    $end_time_partial = new DateTime($data["end_time"], new DateTimeZone("Europe/Rome"));
+                    $start_time_partial = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
+                    $end_time_partial = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
                     $interval_partial = $end_time_partial->diff($start_time_partial);    
                     $time_partial = ($interval_partial->format("%a") * 24) + $interval_partial->format("%H"). ":". $interval_partial->format("%I");
                     list($h, $m) = explode(':',$time_partial);
@@ -743,8 +760,8 @@
                 </thead>';
     
             foreach ($responseDb as $row => $data) {
-                $start_time = new DateTime($data["start_time"], new DateTimeZone("Europe/Rome"));
-                $end_time = new DateTime($data["end_time"], new DateTimeZone("Europe/Rome"));
+                $start_time = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
+                $end_time = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
                 $interval = $end_time->diff($start_time);    
                 $time = ($interval->format("%a") * 24) + $interval->format("%H"). ":". $interval->format("%I");
                 list($h, $m) = explode(':',$time);
@@ -942,6 +959,11 @@
                         <label for="comment" class="form-label">Comment</label>
                         <textarea class="form-control" id="comment" name="comment" rows="3">' . $responseDb["comment"] . '</textarea>
                     </div>
+
+                    <div class="my-2 form-group">
+                        <label for="rate">Rate/Hour</label>
+                        <input type="number" id="rate" name="rate" value="' . $responseDbEmployee["employee_rate"] . '" class="form-control" readonly>
+                    </div>
                     
                     <div class="my-2 form-group">
                         <label for="paid">Paid</label>
@@ -950,6 +972,10 @@
                                 $paidStatus->paidStatus();
                     echo '</select>
                         </div>
+
+                    <div class="my-2 form-group">
+                        <label for="last_edit" class="form-label">Last edit on ' . date("d-m-Y H:i", strtotime($responseDb["last_edit"])) . ' by ' . $responseDbEmployee["name"] . '</label>
+                    </div>
                         
                     <div class="my-2 form-group">
                         <button type="submit" id="update-timesheet" name="update-timesheet" class="btn btn-block btn-primary">Send</button>
@@ -958,6 +984,8 @@
 
         public function updateTimeSheetData() {
             if (isset($_POST["update-timesheet"])) {
+                date_default_timezone_set('Europe/Rome');
+                
                 $dataController = array(
                     "id" => $_POST["id"],
                     "project" => $_POST["project"],
@@ -965,7 +993,9 @@
                     "start_time" => $_POST["start_time"],
                     "end_time" => $_POST["end_time"],
                     "comment" => $_POST["comment"],
-                    "paid" => $_POST["paid"]
+                    "rate" => $_POST["rate"],
+                    "paid" => $_POST["paid"],
+                    "last_edit" => date('Y-m-d H:i:s')
                 );
         
                 $responseDb = Data::updateTimeSheetData($dataController, "works");
