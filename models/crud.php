@@ -32,13 +32,15 @@
         }
 
         public static function startTime($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("INSERT INTO $table (related_employee, related_project, start_time, comment) VALUES (:related_employee, :related_project, :start_time, :comment)");
+            $stmt = Connection::connect()->prepare("INSERT INTO $table (related_employee, related_project, start_time, comment, rate, edit_by, last_edit) VALUES (:related_employee, :related_project, :start_time, :comment, :rate, :related_employee, :last_edit)");
             $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
             $now_time = $date->format("Y-m-d H:i:s");
             $stmt->bindParam(":related_employee", $inputFormData["related_employee"], PDO::PARAM_STR);
             $stmt->bindParam(":related_project", $inputFormData["project"], PDO::PARAM_STR);
             $stmt->bindParam(":start_time", $now_time, PDO::PARAM_STR);
             $stmt->bindParam(":comment", $inputFormData["comment"], PDO::PARAM_STR);
+            $stmt->bindParam(":rate", $inputFormData["employee_rate"], PDO::PARAM_INT);
+            $stmt->bindParam(":last_edit", $now_time, PDO::PARAM_STR);
            
             if ($stmt->execute()) {
                 return 'success';
@@ -81,7 +83,7 @@
 
         // Read
         public static function readEmployeeData($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT id, email, password, level, csrf FROM $table WHERE email = :email");
+            $stmt = Connection::connect()->prepare("SELECT id, name, email, password, level, csrf FROM $table WHERE email = :email");
             $stmt->bindParam(":email", $inputFormData["email"], PDO::PARAM_STR);
             $stmt->execute();
 
@@ -333,24 +335,28 @@
 
         public static function updateTimeSheetData($inputFormData , $table) {
             if (!empty($inputFormData["end_time"])) {
-                $stmt = Connection::connect()->prepare("UPDATE $table SET related_project = :related_project, related_employee = :related_employee, start_time = :start_time, end_time = :end_time, comment = :comment, paid = :paid, edit_by = :edit_by WHERE id = :id");
+                $stmt = Connection::connect()->prepare("UPDATE $table SET related_project = :related_project, related_employee = :related_employee, start_time = :start_time, end_time = :end_time, comment = :comment, rate = :rate, paid = :paid, edit_by = :edit_by, last_edit = :last_edit WHERE id = :id");
                 $stmt->bindParam(":id", $inputFormData["id"], PDO::PARAM_INT);
                 $stmt->bindParam(":related_project", $inputFormData["project"], PDO::PARAM_STR);
                 $stmt->bindParam(":related_employee", $inputFormData["employee"], PDO::PARAM_STR);
                 $stmt->bindParam(":start_time", $inputFormData["start_time"], PDO::PARAM_STR);
                 $stmt->bindParam(":end_time", $inputFormData["end_time"], PDO::PARAM_STR);
                 $stmt->bindParam(":comment", $inputFormData["comment"], PDO::PARAM_STR);
+                $stmt->bindParam(":rate", $inputFormData["rate"], PDO::PARAM_INT);
                 $stmt->bindParam(":paid", $inputFormData["paid"], PDO::PARAM_INT);
                 $stmt->bindParam(":edit_by", $_SESSION["id"], PDO::PARAM_INT);
+                $stmt->bindParam(":last_edit", $inputFormData["last_edit"], PDO::PARAM_STR);
             } else {
-                $stmt = Connection::connect()->prepare("UPDATE $table SET related_project = :related_project, related_employee = :related_employee, start_time = :start_time, comment = :comment, paid = :paid, edit_by = :edit_by WHERE id = :id");
+                $stmt = Connection::connect()->prepare("UPDATE $table SET related_project = :related_project, related_employee = :related_employee, start_time = :start_time, comment = :comment, rate = :rate, paid = :paid, edit_by = :edit_by, last_edit = :last_edit WHERE id = :id");
                 $stmt->bindParam(":id", $inputFormData["id"], PDO::PARAM_INT);
                 $stmt->bindParam(":related_project", $inputFormData["project"], PDO::PARAM_STR);
                 $stmt->bindParam(":related_employee", $inputFormData["employee"], PDO::PARAM_STR);
                 $stmt->bindParam(":start_time", $inputFormData["start_time"], PDO::PARAM_STR);
                 $stmt->bindParam(":comment", $inputFormData["comment"], PDO::PARAM_STR);
+                $stmt->bindParam(":rate", $inputFormData["rate"], PDO::PARAM_INT);
                 $stmt->bindParam(":paid", $inputFormData["paid"], PDO::PARAM_INT);
                 $stmt->bindParam(":edit_by", $_SESSION["id"], PDO::PARAM_INT);
+                $stmt->bindParam(":last_edit", $inputFormData["last_edit"], PDO::PARAM_STR);
             }
         
             if ($stmt->execute()) {
