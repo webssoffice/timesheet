@@ -252,7 +252,7 @@
                         <td class="align-middle">' . $level . '</td>';
 
                         if ($data["level"] == '1') {
-                            if ($_SESSION["id"] == $data["related_employee"]) {
+                            if ($_SESSION["id"] == $data["id"]) {
                                 echo '<td class="align-middle"><a href="/update-employee/' . $data["id"] . '" title="Edit"><button class="btn btn-success">&#9998;</button></a></td>';
                             } else {
                                 echo '<td>&nbsp;</td>';
