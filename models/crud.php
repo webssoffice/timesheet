@@ -103,7 +103,7 @@
         }
 
         public static function viewAllEmployee($table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table");
             $stmt->execute();
         
             return $stmt->fetchAll();
@@ -112,7 +112,7 @@
         }
 
         public static function viewAllProjects($table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table");
             $stmt->execute();
         
             return $stmt->fetchAll();
@@ -121,7 +121,7 @@
         }
 
         public static function viewProjects($table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table");
             $stmt->execute();
         
             return $stmt->fetchAll();
@@ -130,7 +130,7 @@
         }
 
         public static function viewAgenda($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE agenda_date = :agenda_date");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE agenda_date = :agenda_date");
             $stmt->bindParam(':agenda_date' , $inputFormData, PDO::PARAM_STR);
             $stmt->execute();
         
@@ -141,9 +141,9 @@
 
         public static function viewAllInvoices($inputFormData, $table) {
             if ($_SESSION["level"] == '1') {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table GROUP BY related_project");
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table GROUP BY related_project");
             } else {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :id GROUP BY related_project");
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE related_employee = :id GROUP BY related_project");
                 $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             }
             
@@ -155,7 +155,7 @@
         }
 
         public static function paidStatus($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -166,9 +166,9 @@
 
         public static function viewAllWork($inputFormData, $table) {
             if (empty($inputFormData)) {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table ORDER BY related_project, related_employee, paid, id DESC");
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table ORDER BY related_project, related_employee, paid, id DESC");
             } else {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :id ORDER BY related_project, related_employee, paid, id DESC");
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE related_employee = :id ORDER BY related_project, related_employee, paid, id DESC");
                 $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             }
 
@@ -181,12 +181,29 @@
 
         public static function viewWorkInvoice($related_project, $related_employee, $table) {
             if ($_SESSION["level"] == '1') {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_project = :related_project AND end_time <> '' ORDER BY id ASC");
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE related_project = :related_project AND end_time <> '' ORDER BY id ASC");
                 $stmt->bindParam(':related_project' , $related_project, PDO::PARAM_INT);
             } else {
-                $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE related_employee = :related_employee AND related_project = :related_project AND end_time <> '' ORDER BY id ASC");
-                $stmt->bindParam(':related_project' , $related_project, PDO::PARAM_INT);
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE related_employee = :related_employee AND related_project = :related_project AND end_time <> '' ORDER BY id ASC");
                 $stmt->bindParam(':related_employee' , $related_employee, PDO::PARAM_INT);
+                $stmt->bindParam(':related_project' , $related_project, PDO::PARAM_INT);
+            }
+
+            $stmt->execute();
+
+            return $stmt->fetchAll();
+            
+            $stmt = null;
+        }
+
+        public static function viewAllWorkInvoice($related_employee, $paid, $table) {
+            if ($_SESSION["level"] == '1') {
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE paid = :paid AND end_time <> '' ORDER BY id ASC");
+                $stmt->bindParam(':paid' , $paid, PDO::PARAM_INT);
+            } else {
+                $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE related_employee = :related_employee AND paid = :paid AND end_time <> '' ORDER BY id ASC");
+                $stmt->bindParam(':related_employee' , $related_employee, PDO::PARAM_INT);
+                $stmt->bindParam(':paid' , $paid, PDO::PARAM_INT);
             }
 
             $stmt->execute();
@@ -197,7 +214,7 @@
         }
 
         public static function updateEmployee($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -207,7 +224,7 @@
         }
 
         public static function viewRelatedProject($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -216,8 +233,17 @@
             $stmt = null;
         }
 
+        public static function viewAllRelatedProject($table) {
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table");
+            $stmt->execute();
+        
+            return $stmt->fetchAll();
+            
+            $stmt = null;
+        }
+
         public static function updateTimeSheet($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -227,7 +253,7 @@
         }
         
         public static function getProjectName($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -237,7 +263,7 @@
         }
 
         public static function getProjectNameInvoices($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -247,7 +273,7 @@
         }
 
         public static function viewEmployee($table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table");
             $stmt->execute();
         
             return $stmt->fetchAll();
@@ -256,7 +282,7 @@
         }
 
         public static function getEmployeeName($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
@@ -266,7 +292,7 @@
         }
 
         public static function updateProject($inputFormData, $table) {
-            $stmt = Connection::connect()->prepare("SELECT * FROM  $table WHERE id = :id");
+            $stmt = Connection::connect()->prepare("SELECT * FROM $table WHERE id = :id");
             $stmt->bindParam(':id' , $inputFormData, PDO::PARAM_INT);
             $stmt->execute();
         
