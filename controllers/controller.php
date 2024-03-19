@@ -219,13 +219,13 @@
 
         public function viewEmployeeInfo() {
             if (!empty($_SESSION["name"]) && !empty($_SESSION["level"])) {
-                echo $_SESSION["name"];
-
                 if ($_SESSION["level"] == '1') {
-                    echo '&nbsp;(Admin)';
+                    $employeeLevel = '(Admin)';
                 } elseif ($_SESSION["level"] == '2') {
-                    echo '&nbsp;(Employee)';
+                    $employeeLevel = '(Employee)';
                 }
+
+                echo '<span class="d-print-none">' . $_SESSION["name"] . '&nbsp;' . $employeeLevel . '</span>';
             }
         }
 
@@ -522,6 +522,11 @@
 
                     echo '</tr>';
             }
+
+            echo '<tr>
+                    <td class="align-middle col-9"><i>Invoice of all works to be paid</i></td>
+                    <td class="align-middle d-flex justify-content-end"><a href="/show-invoice/0" title="Invoice of all works to be paid"><button class="btn btn-success">&#128065;</button></a></td>
+                </tr>';
         }
 
         public function paidStatus() {
@@ -566,6 +571,12 @@
                 $totalResult[] = $result;
                 $totalTime[] = $time;
 
+                if (strlen($data["comment"]) > 120) {
+                    $dots = '&nbsp;...';
+                } else {
+                    $dots = null;
+                }
+
                 if ($data["paid"] == '0') {
                     $start_time_partial = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
                     $end_time_partial = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
@@ -588,7 +599,7 @@
                             <td class="align-middle d-none d-lg-table-cell">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } else { echo '<div id="' . $classId . '"></div>'; } echo '</td>
                             <td class="align-middle">' . $time . '</td>
                             <td class="align-middle d-none d-lg-table-cell"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
-                            <td class="align-middle">' . nl2br($data["comment"]) . '</td>
+                            <td class="align-middle">' . nl2br(substr($data["comment"], 0, 120)) . $dots . '</td>
                             <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == '1') { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
 
                         if (empty($data["end_time"])) {
@@ -645,7 +656,7 @@
                         <td class="align-middle d-none d-lg-table-cell">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } echo '</td>
                         <td class="align-middle">' . $time . '</td>
                         <td class="align-middle d-none d-lg-table-cell"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
-                        <td class="align-middle">' . nl2br($data["comment"]) . '</td>
+                        <td class="align-middle">' . nl2br(substr($data["comment"], 0, 120)) . $dots . '</td>
                         <td class="col-sm-2 align-middle d-none d-lg-table-cell">'; if ($data["paid"] == '1') { echo '<p class="text-success">Yes</p>'; } else { echo '<p class="text-danger">No</p>'; }  echo '</td>';
 
                         if (empty($data["end_time"])) {
@@ -707,110 +718,221 @@
         }
 
         public function viewInvoice() {
-            $responseDb = Data::viewWorkInvoice($_GET["id"], $_SESSION["id"], "works");
-            $responseDbProject = Data::viewRelatedProject($_GET["id"], "projects");
-
-            foreach ($responseDb as $row => $data) {
-                $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
-            }
-
-            $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
-            $now_time = $date->format("H:i:s d-m-Y");
-
-            echo '<hr>
-                <div class="container p-1">
-                    <div class="row">
-                        <div class="col-2 p-2">Date:</div>
-                        <div class="col p-2">' . $now_time . '</div>
-                    </div>
-                </div>
-
-                <div class="container p-1">
-                    <div class="row">
-                        <div class="col-2 p-2">Employee name:</div>
-                        <div class="col p-2">' . $responseDbEmployee["name"] . '</div>
-                    </div>
-                </div>
-
-                <div class="container p-1">
-                    <div class="row">
-                        <div class="col-2 p-2">Project name:</div>
-                        <div class="col p-2">' . $responseDbProject["project"] . '</div>
-                    </div>
-                </div>
-
-                <div class="container p-1">
-                    <div class="row">
-                        <div class="col-2 p-2">Rate/Hour:</div>
-                        <div class="col p-2"> &euro; ' . $responseDbEmployee["employee_rate"] . '</div>
-                    </div>
-                </div>
-
-                <hr>
-            
-                <thead>
-                    <tr>
-                        <th scope="col" class="col-md-2">Start</th>
-                        <th scope="col" class="col-md-2">Stop</th>
-                        <th scope="col">Total</th>
-                        <th scope="col" class="col-md-1">Rate</th>
-                        <th scope="col" class="col-md-5">Comment</th>
-                        <th scope="col" class="col-md-1">Paid</th>
-                    </tr>
-                </thead>';
-    
-            foreach ($responseDb as $row => $data) {
-                $start_time = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
-                $end_time = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
-                $interval = $end_time->diff($start_time);    
-                $time = ($interval->format("%a") * 24) + $interval->format("%H"). ":". $interval->format("%I");
-                list($h, $m) = explode(':',$time);
-                $decimal = $m/60;
-                $hoursAsDecimal = $h+$decimal;
-                $price = $responseDbEmployee["employee_rate"];
-                $result = $hoursAsDecimal*$price;
-                $totalRate[] = $result;
-                $totalTime[] = $time;
-
-                if ($data["paid"] == '1') {
-                    $paid = 'Yes';
-                } else {
-                    $paid = 'No';
-                }
+            if (!empty($_SESSION["id"]) && is_numeric($_GET["id"]) && $_GET["id"] == '0') {
                 
-                echo '<tbody>
+                $responseDb = Data::viewAllWorkInvoice($_SESSION["id"], "0", "works");
+                $responseDbProject = Data::viewAllRelatedProject("projects");
+
+                foreach ($responseDb as $row => $data) {
+                    $responseDbEmployee = Data::updateEmployee($_SESSION["id"], "employees");
+                }
+
+                $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
+                $now_time = $date->format("H:i:s d-m-Y");
+
+                echo '<hr>
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Date:</div>
+                            <div class="col p-2">' . $now_time . '</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Employee name:</div>
+                            <div class="col p-2">' . $responseDbEmployee["name"] . '</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Project name:</div>
+                            <div class="col p-2">All projects</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Rate/Hour:</div>
+                            <div class="col p-2"> &euro; ' . $responseDbEmployee["employee_rate"] . '</div>
+                        </div>
+                    </div>
+
+                    <hr>
+                
+                    <thead>
                         <tr>
-                            <td class="w-15 align-middle">' . date("d-m-Y H:i", strtotime($data["start_time"])) . '</td>
-                            <td class="w-15 align-middle">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } echo '</td>
-                            <td class="w-15 align-middle">' . $time . '</td>
-                            <td class="w-15 align-middle"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
-                            <td class="w-25 align-middle">' . nl2br($data["comment"]) . '</td>
-                            <td class="w-15 align-middle">' . $paid . '</td>
+                            <th scope="col" class="col-md-2">Start</th>
+                            <th scope="col" class="col-md-2">Stop</th>
+                            <th scope="col">Total</th>
+                            <th scope="col" class="col-md-1">Rate</th>
+                            <th scope="col" class="col-md-5">Comment</th>
+                            <th scope="col" class="col-md-1 d-print-none">Paid</th>
                         </tr>
-                    </tbody>';
-            }
+                    </thead>';
+        
+                foreach ($responseDb as $row => $data) {
+                    $start_time = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
+                    $end_time = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
+                    $interval = $end_time->diff($start_time);    
+                    $time = ($interval->format("%a") * 24) + $interval->format("%H"). ":". $interval->format("%I");
+                    list($h, $m) = explode(':',$time);
+                    $decimal = $m/60;
+                    $hoursAsDecimal = $h+$decimal;
+                    $price = $responseDbEmployee["employee_rate"];
+                    $result = $hoursAsDecimal*$price;
+                    $totalRate[] = $result;
+                    $totalTime[] = $time;
 
-            if (!empty($totalRate)) {             
-                $sum = strtotime('00:00:00');
-                $time = 0;
-                
-                foreach ($totalTime as $element) {
-                    $timeInSec = strtotime($element) - $sum;
-                    $time = $time + $timeInSec;
+                    if ($data["paid"] == '1') {
+                        $paid = 'Yes';
+                    } else {
+                        $paid = 'No';
+                    }
+                    
+                    echo '<tbody>
+                            <tr>
+                                <td class="w-15 align-middle">' . date("d-m-Y H:i", strtotime($data["start_time"])) . '</td>
+                                <td class="w-15 align-middle">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } echo '</td>
+                                <td class="w-15 align-middle">' . $time . '</td>
+                                <td class="w-15 align-middle"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
+                                <td class="w-25 align-middle">' . nl2br($data["comment"]) . '</td>
+                                <td class="w-15 align-middle d-print-none">' . $paid . '</td>
+                            </tr>
+                        </tbody>';
                 }
+
+                if (!empty($totalRate)) {             
+                    $sum = strtotime('00:00:00');
+                    $time = 0;
+                    
+                    foreach ($totalTime as $element) {
+                        $timeInSec = strtotime($element) - $sum;
+                        $time = $time + $timeInSec;
+                    }
+                    
+                    $h = intval($time / 3600);
+                    $time = $time - ($h * 3600);
+                    $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
+                    $timeOutput = ("$h:$m");
                 
-                $h = intval($time / 3600);
-                $time = $time - ($h * 3600);
-                $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
-                $timeOutput = ("$h:$m");
-            
-            
-                echo '<tr class="table-primary">
-                        <th colspan="1">&nbsp;</th>
-                        <th class="text-end" scope="row">TOTAL:</th>
-                        <th scope="row">' . $timeOutput . '</th>
-                        <th colspan="4"> &euro; ' . number_format(array_sum($totalRate), 2, ',', '.') . '</th>
-                    </tr>';
+                
+                    echo '<tr class="table-primary">
+                            <th colspan="1">&nbsp;</th>
+                            <th class="text-end" scope="row">TOTAL:</th>
+                            <th scope="row">' . $timeOutput . '</th>
+                            <th colspan="4"> &euro; ' . number_format(array_sum($totalRate), 2, ',', '.') . '</th>
+                        </tr>';
+                }
+            } elseif (!empty($_SESSION["id"]) && is_numeric($_GET["id"])) {
+                $responseDb = Data::viewWorkInvoice($_GET["id"], $_SESSION["id"], "works");
+                $responseDbProject = Data::viewRelatedProject($_GET["id"], "projects");
+
+                foreach ($responseDb as $row => $data) {
+                    $responseDbEmployee = Data::updateEmployee($data["related_employee"], "employees");
+                }
+
+                $date = new DateTime('now', new DateTimeZone("Europe/Rome"));
+                $now_time = $date->format("H:i:s d-m-Y");
+
+                echo '<hr>
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Date:</div>
+                            <div class="col p-2">' . $now_time . '</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Employee name:</div>
+                            <div class="col p-2">' . $responseDbEmployee["name"] . '</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Project name:</div>
+                            <div class="col p-2">' . $responseDbProject["project"] . '</div>
+                        </div>
+                    </div>
+
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col-2 p-2">Rate/Hour:</div>
+                            <div class="col p-2"> &euro; ' . $responseDbEmployee["employee_rate"] . '</div>
+                        </div>
+                    </div>
+
+                    <hr>
+                
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-md-2">Start</th>
+                            <th scope="col" class="col-md-2">Stop</th>
+                            <th scope="col">Total</th>
+                            <th scope="col" class="col-md-1">Rate</th>
+                            <th scope="col" class="col-md-5">Comment</th>
+                            <th scope="col" class="col-md-1 d-print-none">Paid</th>
+                        </tr>
+                    </thead>';
+        
+                foreach ($responseDb as $row => $data) {
+                    $start_time = new DateTimeImmutable("" . $data["start_time"] . " Europe/Rome");
+                    $end_time = new DateTimeImmutable("" . $data["end_time"] . " Europe/Rome");
+                    $interval = $end_time->diff($start_time);    
+                    $time = ($interval->format("%a") * 24) + $interval->format("%H"). ":". $interval->format("%I");
+                    list($h, $m) = explode(':',$time);
+                    $decimal = $m/60;
+                    $hoursAsDecimal = $h+$decimal;
+                    $price = $responseDbEmployee["employee_rate"];
+                    $result = $hoursAsDecimal*$price;
+                    $totalRate[] = $result;
+                    $totalTime[] = $time;
+
+                    if ($data["paid"] == '1') {
+                        $paid = 'Yes';
+                    } else {
+                        $paid = 'No';
+                    }
+                    
+                    echo '<tbody>
+                            <tr>
+                                <td class="w-15 align-middle">' . date("d-m-Y H:i", strtotime($data["start_time"])) . '</td>
+                                <td class="w-15 align-middle">'; if (!empty($data["end_time"])) { echo date("d-m-Y H:i", strtotime($data["end_time"])); } echo '</td>
+                                <td class="w-15 align-middle">' . $time . '</td>
+                                <td class="w-15 align-middle"> &euro; ' . number_format($result, 2, ',', '.') . '</td>
+                                <td class="w-25 align-middle">' . nl2br($data["comment"]) . '</td>
+                                <td class="w-15 align-middle d-print-none">' . $paid . '</td>
+                            </tr>
+                        </tbody>';
+                }
+
+                if (!empty($totalRate)) {             
+                    $sum = strtotime('00:00:00');
+                    $time = 0;
+                    
+                    foreach ($totalTime as $element) {
+                        $timeInSec = strtotime($element) - $sum;
+                        $time = $time + $timeInSec;
+                    }
+                    
+                    $h = intval($time / 3600);
+                    $time = $time - ($h * 3600);
+                    $m = str_pad(intval($time / 60), 2, '0', STR_PAD_LEFT);
+                    $timeOutput = ("$h:$m");
+                
+                
+                    echo '<tr class="table-primary">
+                            <th colspan="1">&nbsp;</th>
+                            <th class="text-end" scope="row">TOTAL:</th>
+                            <th scope="row">' . $timeOutput . '</th>
+                            <th colspan="4"> &euro; ' . number_format(array_sum($totalRate), 2, ',', '.') . '</th>
+                        </tr>';
+                }
+            } else {
+                header("location: /404");
             }
         }
 
